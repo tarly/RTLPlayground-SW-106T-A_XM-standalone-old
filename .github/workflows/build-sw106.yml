@@ -1,0 +1,53 @@
+name: Build SW-106T-A_XM
+
+on:
+  push:
+    paths:
+      - "machine/SW-106T-A_XM.*"
+      - "config/**"
+      - ".github/workflows/build-sw106.yml"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:trixie
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            make gcc g++ pkg-config bison flex libboost-dev patch \
+            bzip2 curl ca-certificates xxd python3 libjson-c-dev zlib1g-dev git
+
+      - name: Build
+        run: |
+          make CI=1 \
+            MACHINE=SW-106T-A_XM \
+            CONFIG=config/default.txt \
+            VERSION=0.2.6 \
+            OUTPUT_DIR=dist \
+            OUTPUT_NAME=SW-106T-A_XM-V0.2.6.bin
+
+      - name: Verify 512 KB image
+        run: |
+          test -f dist/SW-106T-A_XM-V0.2.6.bin
+          size=$(stat -c%s dist/SW-106T-A_XM-V0.2.6.bin)
+          echo "image size: $size bytes"
+          test "$size" -eq 524288
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: SW-106T-A_XM-V0.2.6
+          path: dist/SW-106T-A_XM-V0.2.6.bin
+          if-no-files-found: error
