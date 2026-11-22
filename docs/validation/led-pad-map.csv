@@ -1,0 +1,11 @@
+﻿pad,physical_led,source,note
+0,5 blue,0x20,measured
+3,1 amber,0x11,measured
+4,1 green,0x10,measured
+6,2 amber,0x15,measured
+8,2 green,0x14,measured
+10,3 green,0x18,measured
+12,3 green,0x19,duplicate path / source inferred
+18,4 amber,0x1c,measured
+21,4 amber,0x1d,duplicate path / source inferred
+25,6 blue,0x0c,measured

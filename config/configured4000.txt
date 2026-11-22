@@ -1,0 +1,10 @@
+ip 192.168.14.100
+gw 192.168.14.254
+netmask 255.255.255.0
+hostname SW-106T-A_XM
+vlan 1 1 2 3
+vlan 4000 4 5t 6t
+pvid 4 4000
+vlan 4000 mgmt
+stp mode off
+lldp on
