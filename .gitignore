@@ -4,7 +4,6 @@
 *.sym
 *.map
 *.ihx
-*.asm
 html_data.c
 html_data.h
 version.h
