@@ -1,135 +1,118 @@
-﻿# RTLPlayground 鏉跨骇鏀寔锛歋W-106T-A_XM
+# RTLPlayground 板级支持：SW-106T-A_XM
 
-灏忕背 SW-106T-A锛圧TL8372N锛? 脳 2.5G RJ45 + 2 脳 SFP+锛?2 Mbit SPI Flash锛夌殑
-鏉跨骇瀹氫箟銆佷袱杞凯浠ｈ褰曞拰楠岃瘉璧勬枡锛岀敤浜庢彁浜ゅ埌 RTLPlayground 涓婃父銆?
-## 鐘舵€?
-| 椤圭洰 | 鍊?|
+小米 SW-106T-A 交换机（RTL8372N，4 x 2.5G RJ45 + 2 x SFP+，32 Mbit SPI Flash）
+的板级定义和验证固件。
+
+## 状态
+
+| 项目 | 值 |
 |---|---|
-| 鏉垮彿 | `SW-106T-A_XM` |
-| PCB 鍙?| `SW-106T-A_XM` |
-| 涓绘帶 | RTL8372N |
-| 绔彛 | 4 脳 2.5G RJ45 + 2 脳 SFP+ |
-| Flash | 32 Mbit SPI锛孌IO |
-| 鏈€缁堝浐浠?| `V0.2.6` |
-| 缃戠粶鍩虹嚎 | `V0.1.2_NOLED` |
-| 闀滃儚澶у皬 | 512 KB锛屼笉鍋?4 MB padding |
+| 板号 | `SW-106T-A_XM` |
+| PCB 号 | `SW-106T-A_XM` |
+| 主控 | RTL8372N |
+| 端口 | 4 x 2.5G RJ45 + 2 x SFP+ |
+| Flash | 32 Mbit SPI，DIO |
+| 最终固件 | `V0.2.6` |
+| 网络基线 | `V0.1.2_NOLED` |
+| 镜像 | 512 KB，不做 4 MB padding |
 
-## 涓や釜鍏抽敭鑺傜偣
+## 两个节点
 
-### 1. 缃戠粶鍩虹嚎锛歏0.1.2_NOLED
+### V0.1.2_NOLED：网络基线
 
-绗竴鐗堝彲鐢ㄥ浐浠讹紝瀹屾垚浜嗭細
+- REF 铜口映射：物理 1-4 -> 逻辑 4-7
+- 物理 1/2 的 MDI 反序 `0xa90 = 0x03`
+- SFP5 / SFP6 引脚映射
+- DIO Flash
+- Web、VLAN、管理访问、配置保存
+- 默认 `192.168.10.247/24`
 
-- REF 閾滃彛鏄犲皠锛氱墿鐞?1鈥? 鈫?閫昏緫 4鈥?锛?- 鐗╃悊 1/2 鐨?MDI 鍙嶅簭 `0xa90 = 0x03`锛?- SFP5 / SFP6 寮曡剼鏄犲皠锛?- DIO Flash 妯″紡锛?- Web銆乂LAN銆佺鐞嗚闂€侀厤缃繚瀛橈紱
-- 榛樿閰嶇疆 `192.168.10.247/24`銆?
-璇︾粏璁板綍锛歔docs/iterations/V0.1.2-network-baseline.md](docs/iterations/V0.1.2-network-baseline.md)
+### V0.2.6：LED 修复
 
-### 2. LED 淇锛歏0.2.6
+- `LED_PORT_SET_SEL = 0x00030ac0`
+- 基于 pad 表重排 `led_mux`
+- `LED_GLB_IO_EN = 0xffffffff`
+- `LED_GLB_ACTIVE = 0x3fffffff`
+- 无 link 全灭
 
-鏈€缁堢増鏈紝瀹屾垚浜嗭細
+## LED 行为
 
-- `leds_setup()` 蹇呴』鐪熸鎵ц锛?- `LED_PORT_SET_SEL = 0x00030ac0`锛?- 鍩轰簬 pad 琛ㄩ噸鎺?`led_mux`锛?- `LED_GLB_IO_EN = 0xffffffff`锛?- `LED_GLB_ACTIVE = 0x3fffffff`锛?- 鏃?link 鍏ㄧ伃锛?- 1/2/3/4 鍜?SFP5/6 涓庣鍙ｄ竴涓€瀵瑰簲銆?
-璇︾粏璁板綍锛歔docs/iterations/V0.2.6-led.md](docs/iterations/V0.2.6-led.md)
-
-## LED 瀹炴祴琛屼负
-
-| 鐘舵€?| LED |
+| 状态 | LED |
 |---|---|
-| 鏃?link | 鍏ㄧ伃 |
-| 1 鍙?| 1 缁块棯 |
-| 2 鍙?| 2 缁块棯 |
-| 3 鍙?| 3 缁块棯 |
-| 4 鍙?| 4 姗欓棯 |
-| SFP5 | 5 钃濋棯 |
-| SFP6 | 6 钃濋棯 |
+| 无 link | 全灭 |
+| 1 口 | 1 绿闪 |
+| 2 口 | 2 绿闪 |
+| 3 口 | 3 绿闪 |
+| 4 口 | 4 橙闪 |
+| SFP5 | 5 蓝闪 |
+| SFP6 | 6 蓝闪 |
 
-**鏇存锛?* 涔嬪墠鐨勬暣鐞嗘枃妗ｆ妸 4 鍙?LED 棰滆壊褰撴垚寮傚父锛岃繖鏄枃妗ｉ敊璇€? 
-鏈満 4 鍙ｅ氨鏄鐏紝琛屼负姝ｇ‘锛涗笉鍚?PCB 鎵规棰滆壊鍙兘涓嶅悓锛岄鑹蹭笉鏄晠闅溿€?
-## 绔彛涓庡紩鑴?
-| 鍔熻兘 | 鏄犲皠 |
+本机 4 口是橙灯，这是实测行为，不是故障。
+
+## 端口与引脚
+
+| 功能 | 映射 |
 |---|---|
-| 鐗╃悊 1鈥? | 閫昏緫 4鈥? |
-| SFP5 | 閫昏緫 8 / SDS1 / GPIO38 / I虏C 39/40 |
-| SFP6 | 閫昏緫 3 / SDS0 / GPIO37 / I虏C 41/40 |
-| MDI 鍙嶅簭 | `0xa90 = 0x03` |
-| Flash | DIO锛宍flash_sio = 0` |
+| 物理 1-4 | 逻辑 4-7 |
+| SFP5 | 逻辑 8 / SDS1 / GPIO38 / I2C 39/40 |
+| SFP6 | 逻辑 3 / SDS0 / GPIO37 / I2C 41/40 |
+| MDI 反序 | `0xa90 = 0x03` |
+| Flash | DIO，`flash_sio = 0` |
 
-鏉跨骇璇存槑锛歔docs/boards/SW-106T-A_XM.md](docs/boards/SW-106T-A_XM.md)
-
-## 鐩綍
+## 目录
 
 ```text
-machine/                 RTLPlayground 鏉跨骇瀹氫箟
-config/default.txt       榛樿 VLAN1 / 192.168.10.247
-config/configured4000.txt  VLAN4000 绠＄悊閰嶇疆
-docs/boards/             鏉垮彿銆佸紩鑴氥€佹彁浜よ鏄?docs/iterations/         V0.1.2 / V0.2.6 杩唬璁板綍
-docs/validation/         缃戠粶鍜?LED 楠岃瘉璧勬枡
-firmware/                512 KB 娴嬭瘯闀滃儚
-build.sh                 鏋勫缓鑴氭湰
+machine/                 板级定义
+config/default.txt       默认 VLAN1 / 192.168.10.247
+config/configured4000.txt
+docs/boards/             板号和引脚
+docs/iterations/         V0.1.2 / V0.2.6 记录
+docs/validation/         网络和 LED 验证
+firmware/                512 KB 镜像
+ci/                      GitHub Actions 文件
 ```
 
-## 鏋勫缓
+## 构建
 
-鎶?machine 鏂囦欢澶嶅埗杩?RTLPlayground锛?
 ```sh
-cp machine/SW-106T-A_XM.c machine/SW-106T-A_XM.h \
-   machine/SW-106T-A_XM_init.c <rtlplayground>/machine/
-
 make MACHINE=SW-106T-A_XM \
      CONFIG=config/default.txt \
      VERSION=0.2.6
 ```
 
-鐢熸垚 512 KB 闀滃儚锛屼笉瑕?padding 鎴?4 MB銆?
-## 鍒锋満涓庨厤缃?
-- 榛樿鍥轰欢閰嶇疆锛歚192.168.10.247/24`锛屾墍鏈夊彛 VLAN1锛?- `config/configured4000.txt` 鏄畾鍒堕厤缃細
-  - 1鈥? 鍙ｏ細VLAN1 untagged
-  - 4 鍙ｏ細VLAN4000 untagged锛孭VID 4000
-  - SFP5/6锛歏LAN4000 tagged
-  - 绠＄悊 VLAN 4000锛宍192.168.14.100/24`锛岀綉鍏?`192.168.14.254`
+输出是 512 KB 镜像，不要 padding 成 4 MB。
 
-**閲嶈锛?* Web 鍥轰欢鍗囩骇涓嶄細瑕嗙洊 Flash 閰嶇疆鍖恒€? 
-鍒峰畬 configured 闀滃儚鍚庤鎵ц锛?
+## 刷写
+
+默认配置：
+
 ```text
-factory-reset
+IP:      192.168.10.247
+Netmask: 255.255.255.0
+Gateway: 192.168.10.1
+用户名: admin
+密码:   admin
 ```
 
-鎴栬€呮仮澶嶉粯璁ら厤缃紝鎴栫敤缂栫▼鍣ㄦ暣鐗囧啓 512 KB銆? 
-鍚﹀垯浠嶇劧鏄棫 IP/鏃?VLAN銆?
-## 楠岃瘉璧勬枡
+Web 固件升级会保留配置区。刷 configured 镜像后需要执行
+`factory-reset`、恢复默认，或用编程器整片写。
 
-- [缃戠粶娴嬭瘯缁撴灉](docs/validation/network-test-results.md)
-- [LED 娴嬭瘯缁撴灉](docs/validation/led-test-results.md)
-- [LED pad 琛?CSV](docs/validation/led-pad-map.csv)
+## 验证
 
-缃戠粶楠岃瘉锛?
-- 1鈥? 鍙ｉ兘鑳?link銆乸ing锛?- SFP5/6 鑳借瘑鍒?10G 妯″潡骞?link锛?- Web 姝ｅ父锛?- VLAN4000 绠＄悊锛? 鍙?untagged銆丼FP tagged锛夋甯革紱
-- 閲嶅惎鍚庨厤缃笉涓€?
-LED 楠岃瘉锛?
-- 鏃?link 鍏ㄧ伃锛?- 1鈥? 鍙ｅ搴旂伅鍔ㄤ綔锛?- SFP5/6 钃濈伅锛?- `LED_PORT_SET_SEL = 0x00030ac0`锛?- `LED_GLB_ACTIVE = 0x3fffffff`銆?
-## 鎻愪氦鍒?RTLPlayground
+- [网络结果](docs/validation/network-test-results.md)
+- [LED 结果](docs/validation/led-test-results.md)
+- [LED pad 表](docs/validation/led-pad-map.csv)
 
-澶嶅埗锛?
-```text
-machine/SW-106T-A_XM.c
-machine/SW-106T-A_XM.h
-machine/SW-106T-A_XM_init.c
-docs/boards/SW-106T-A_XM.md
-docs/validation/*
-```
+## CI
 
-鍒?RTLPlayground 瀵瑰簲鐩綍锛屾澘鍙峰拰 PCB 鍙烽兘濉?`SW-106T-A_XM`銆?
-瀹屾暣娓呭崟锛歔docs/boards/SW-106T-A_XM.md](docs/boards/SW-106T-A_XM.md)
+workflow 源文件在 `ci/build-sw106.yml`。如果 GitHub 上还没有启用，
+把它复制到 `.github/workflows/build-sw106.yml` 一次即可。它会构建镜像、
+校验 524288 字节并上传 artifact。
 
-## 宸茬煡璇存槑
-
-- 4 鍙ｆ鐏槸姝ｇ‘鐨勶紱涔嬪墠鏂囨。鍐欐垚寮傚父锛屽凡鏇存锛?- 1 姗欎笉鏄潖鐨勶紝`ledpad 3` 鑳界偣浜紱
-- 鍘熷巶寮€鏈哄叏浜槸 bootloader/鏃╂湡鑷锛屼笉鏄?`LED_MODE` bit17锛?- 10GBASE-T SFP+ 妯″潡鎺?2.5G 瀵圭鏃讹紝Web 鍙兘鏄剧ず 10G锛岃繖鏄富鏈轰晶閫熺巼锛?- 鏈澘鏃犲彲鐢?UART锛屽姟蹇呬繚鐣欏畬鏁?Flash 澶囦唤銆?
-## 鑻辨枃鏂囨。
+## 英文
 
 [README.md](README.md)
 
-## 鑷磋阿
+## 致谢
 
-RTLPlayground 涓婃父椤圭洰銆丼DCC 鍙?RTL837x 绀惧尯銆?
-
+RTLPlayground 上游、SDCC 及 RTL837x 社区。
